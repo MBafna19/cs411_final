@@ -14,31 +14,6 @@ var db = mysql.createConnection({
     database:'project',
 })
 
-
-/*
-db.connect(function(err) {
-    //if (err) throw err;
-    //if (flop == 1) {
-        var sql = "INSERT INTO `Student` (`NetID`, `Student_Name`) VALUES ('congfei2', 'Congfayyy');";
-    //    flop = 2;
-    //} else {
-    //    var sql = "DELETE FROM `Student` WHERE `NetID`=`congfei2`";
-    //    flop = 1;
-    //}
-        db.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log(result.affectedRows + " record(s) updated");
-    });
-  });
-
-app.get('/', (require, response) => {
-    const sqlInsert = "INSERT INTO `Student` (`NetID`, `Student_Name`) VALUES ('rohanar2', 'Rohanius');";
-    db.query(sqlInsert, (err, result) => {
-        response.send("Hello world!!!");
-    })
-})
-*/
-
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
