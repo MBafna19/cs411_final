@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // plugin that creates slider
 import Slider from "nouislider";
 // @material-ui/core components
@@ -36,14 +36,13 @@ import styles from "assets/jss/material-kit-react/views/componentsSections/basic
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import Axios from 'axios'
 
 const useStyles = makeStyles(styles);
-let textInput = React.createRef();
-function toDo() {
-  alert(textInput.current.value)
-}
+const link = 'http://localhost:3002'
 
 export default function SectionStudent() {
+  
   const schoolclasses = ["CS374", "CS456", "CSfie"]
   let classOptions = schoolclasses.map((values, index) => ({
     key: index,
@@ -57,21 +56,46 @@ export default function SectionStudent() {
   const [dense, setDense] = React.useState(false);
   const [secondary, setSecondary] = React.useState(false);
   const [schoolCourses, setSchoolCourses] = React.useState([...classOptions])
-
+  const [handleEditClass, setHandleEditClass] = React.useState([])
+  const [addMinors, setAddMinors] = React.useState(false)
 
   
-  const handleAddClass = (newValue) => {
-    if(newValue == null) {
-      return
+  const handleSave = () => {
+    /**
+     * If student does not exist, add them to the database
+     * Send a query to add values to the classes database
+     */
+    alert('saved to database')
+  }
+
+  const handleMinors= () => {
+    /**
+     * Send query to find minors to take
+     */
+    setAddMinors(true)
+  }
+  const handleChange = (newValue) => {
+    let arr = []
+    newValue.map((value, i) => {
+      arr.push(value)
+    });
+    setHandleEditClass(arr)
+  }
+
+  const handleAddClass = () => {
+    let arr = []
+    
+    handleEditClass.map((value, i) =>{
+      edu.indexOf(value.text) == -1 ? arr.push(value.text) : console.log("This item already exists");
+    });
+
+    if(arr.length == 0) {
+      setHandleEditClass([])
+      return;
     }
-    if (NetId == '') {
-      alert('Please enter a NetId')
-      return
-    }
-    let val = newValue[0].text
-    const newItems = [...edu]
-    newItems.indexOf(val) == -1 ? newItems.push(val) : console.log("This item already exists");
-    setEdu(newItems)
+    let arr2 = edu.concat(arr)
+    setEdu(arr2)
+    setHandleEditClass([])
   }
 
   const handleClick = () => {
@@ -81,6 +105,11 @@ export default function SectionStudent() {
     }
     setEdu(["CS374", "CS241", "Hurray"])
     setNetId2(NetId)
+
+    /** Check if student exists, if not operate as an anonymous person */
+    /** If student exists, find classes they are taking */
+   
+    
     setResultShown(true)
   }
 
@@ -160,39 +189,48 @@ export default function SectionStudent() {
               </Grid>
             </Grid>
             <GridItem xs={10} sm={10} md={8}>
-              <CustomInput
-                value={NetId}
-                labelText="NetId"
-                inputProps={{
-                  onChange: (newid) => setNetId(newid.target.value)
-
-                }}
-                name="AddNewClass"
-                formControlProps={{
-                  fullWidth: true
-                }}
-              />
-              <Button onClick={handleAddClass} color="success">Add Classes</Button>
-              <Button onClick={handleClick} color="info">Save to {NetId2}</Button>
               <Autocomplete
                 multiple
                 id="tags-outlined"
+                value = {handleEditClass}
                 options={schoolCourses}
-                onChange={(event, newValue) => handleAddClass(newValue)}
+                onChange={(event, newValue) => handleChange(newValue)}
                 getOptionLabel={(option) => option.text}
                 filterSelectedOptions
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant="outlined"
+                      label={option.text}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     variant="outlined"
-                    label="filterSelectedOptions"
+                    label="addClasses"
                     placeholder="Favorites"
                   />
                 )}
               />
+              <GridItem xs={10} sm={10} md={8}>
+              <Button onClick={handleAddClass} color="info">Add Classes</Button>
+              <Button onClick={handleSave} color="rose">Save to Student</Button>
+              <Button onClick={handleMinors} color="success">Find minors</Button>
+            </GridItem>
             </GridItem>
 
 
+          </div>}
+
+          {addMinors && <div className={classes.title}>
+            <h3>
+              Minors you are closest to completing
+              <br />
+              <small>Minors you are closest to completing</small>
+            </h3>
           </div>}
         </div>
       </div>
