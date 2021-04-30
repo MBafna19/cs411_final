@@ -11,8 +11,7 @@ var db = mysql.createConnection({
     password:'12345',
     database:'project',
     host: '172.17.0.1',
-    port: '3306'
-
+    port: 3306
 })
 
 app.use(cors());
@@ -242,6 +241,7 @@ app.post("/api/updateWorking", (require, response) => {
 //PRITHIV (Student)
 
 app.post("/api/getStudent", (require, response) => {
+    alert('here');
     const NetID = require.body.NetID;
     const sqlSelect = "SELECT Student_Name FROM `Student` WHERE NetID = ?";
     db.query(sqlSelect, [NetID], (err, result) => {

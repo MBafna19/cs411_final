@@ -9,4 +9,4 @@ handlers:
   static_files: build/index.html
   upload: build/index.html
 beta_settings:
-  cloud_sql_instances: myinstance2=tcp:3306
+  cloud_sql_instances: cs-411-307118:us-central1:myinstance2=tcp:3306
