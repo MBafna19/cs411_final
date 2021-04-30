@@ -43,7 +43,9 @@ const link = 'http://localhost:3002'
 
 export default function SectionStudent() {
   
-  const schoolclasses = ["CS374", "CS456", "CSfie"]
+  let schoolclasses = ["CS374", "CS456", "CSfie"]
+
+  
   let classOptions = schoolclasses.map((values, index) => ({
     key: index,
     text: values,
@@ -58,21 +60,83 @@ export default function SectionStudent() {
   const [schoolCourses, setSchoolCourses] = React.useState([...classOptions])
   const [handleEditClass, setHandleEditClass] = React.useState([])
   const [addMinors, setAddMinors] = React.useState(false)
+  const [anonymous, setAnonymous] = React.useState(false)
+  const [minorResult, setMinorResult] = React.useState([])
 
-  
-  const handleSave = () => {
+  const allCourses = async () => {
+    const result = await Axios.post('http://localhost:3002/api/getAllCourse');
+    
+    schoolclasses = result.data;
+    classOptions = schoolclasses.map((values, index) => ({
+      key: index,
+      text: values.Course_Name,
+      value: values.CRN
+    }));
+    setSchoolCourses([...classOptions])
+    return 'done';
+  }
+
+  const getCRN = async (CRN) => {
+    const result = await Axios.post('http://localhost:3002/api/getCourse', {CRN: CRN});
+    return {
+      key: result.data[0].CRN,
+      text: result.data[0].Course_Name,
+      value: result.data[0].CRN
+    }
+  }
+
+  const studentsCourses = async () => {
+    const result5 = await Axios.post('http://localhost:3002/api/getTaking', {NetID: NetId});
+    let arr = [];
+    result5.data.map(async (values, index) => {
+      const resval = await getCRN(values.CRN);
+      arr.push({key: values.CRN, text: resval.text, value: values.CRN})
+    });
+    setEdu(arr)
+    return 'done';
+  }
+
+
+  const insertStudentTaking = async (CRN1) => {
+    const result5 = await Axios.post('http://localhost:3002/api/insertTaking', {NetID: NetId, CRN:CRN1});
+    return 'done';
+  }
+
+  const deleteStudentTaking = async () => {
+    const result5 = await Axios.post('http://localhost:3002/api/deleteTaking', {NetID: NetId});
+    return 'done';
+  }
+
+  const findMinors = async () => {
+    const result5 = await Axios.post('http://localhost:3002/api/closestProgramToCompletion', {NetID: NetId});
+    setMinorResult(result5.data)
+    return 'done';
+  }
+
+  const handleSave = async () => {
     /**
      * If student does not exist, add them to the database
      * Send a query to add values to the classes database
      */
+    if(anonymous){
+      alert('Not added as student. Contact administrator')
+    } else {
+      await deleteStudentTaking();
+      let res = edu.map((a => a.value));
+      res.map(async (value, i) => {
+        await insertStudentTaking(value)
+      });
+    }
     alert('saved to database')
   }
 
-  const handleMinors= () => {
+  const handleMinors= async () => {
     /**
      * Send query to find minors to take
      */
-    setAddMinors(true)
+    let res = await findMinors();
+    setAddMinors(true);
+    return res
   }
   const handleChange = (newValue) => {
     let arr = []
@@ -84,9 +148,9 @@ export default function SectionStudent() {
 
   const handleAddClass = () => {
     let arr = []
-    
+    let result = edu.map(a => a.text);
     handleEditClass.map((value, i) =>{
-      edu.indexOf(value.text) == -1 ? arr.push(value.text) : console.log("This item already exists");
+      result.indexOf(value.text) == -1 ? arr.push(value) : console.log("This item already exists");
     });
 
     if(arr.length == 0) {
@@ -98,19 +162,35 @@ export default function SectionStudent() {
     setHandleEditClass([])
   }
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (NetId == '') {
       alert('Please enter a NetId')
       return
     }
-    setEdu(["CS374", "CS241", "Hurray"])
     setNetId2(NetId)
 
     /** Check if student exists, if not operate as an anonymous person */
+    await Axios.post('http://localhost:3002/api/getStudent', {
+      NetID: NetId
+    }).then((result) => {
+      if(result.data.length == 0) {
+        alert('Please enter a valid NetID')
+        setAnonymous(true)
+        setEdu([])
+      } else {
+        /**Find classes they are taking */
+        setEdu([])
+        setAnonymous(false)
+        setResultShown(true)
+        
+      }
+    })
     /** If student exists, find classes they are taking */
-   
     
-    setResultShown(true)
+    if(!anonymous) {
+      await studentsCourses();
+    }
+    await allCourses();
   }
 
   const deleteButton = (i) => {
@@ -119,7 +199,8 @@ export default function SectionStudent() {
     setEdu(newItems)
   }
   function generate() {
-    return edu.map((value, i) =>
+    let res = edu.map(a => a.text);
+    return res.map((value, i) =>
       React.cloneElement(<ListItem>
         <ListItemAvatar>
           <Avatar>
@@ -135,6 +216,24 @@ export default function SectionStudent() {
             <DeleteIcon />
           </IconButton>
         </ListItemSecondaryAction>
+      </ListItem>, {
+        key: { i },
+      }),
+    );
+  }
+
+  function generate2() {
+    return minorResult.map((value, i) =>
+      React.cloneElement(<ListItem>
+        <ListItemAvatar>
+          <Avatar>
+            <FolderIcon />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText
+          primary={value.Minor}
+          secondary={value.Remaining_Classes_For_Minor ? "Classes needed: " + value.Remaining_Classes_For_Minor : null}
+        />
       </ListItem>, {
         key: { i },
       }),
@@ -218,7 +317,7 @@ export default function SectionStudent() {
               <GridItem xs={10} sm={10} md={8}>
               <Button onClick={handleAddClass} color="info">Add Classes</Button>
               <Button onClick={handleSave} color="rose">Save to Student</Button>
-              <Button onClick={handleMinors} color="success">Find minors</Button>
+              <Button onClick={handleMinors} color="success">Find Minor Programs</Button>
             </GridItem>
             </GridItem>
 
@@ -231,6 +330,7 @@ export default function SectionStudent() {
               <br />
               <small>Minors you are closest to completing</small>
             </h3>
+            {generate2()}
           </div>}
         </div>
       </div>
