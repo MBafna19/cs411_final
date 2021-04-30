@@ -64,6 +64,6 @@ app.post("/api/countRequires", (require, response) => {
     const sqlAdv = "SELECT Count(Requires.CRN) FROM Student Join Pursuing ON Student.NetID = Pursuing.NetID Join Requires ON Pursuing.P_ID = Requires.P_ID WHERE Student.NetID = ? ORDER BY Count(Requires.CRN) DESC LIMIT 15";
     db.query(sqlAdv, [NetID], (err, result) => {
         response.send(result);
-        console.log(err);
+        
     })
 });

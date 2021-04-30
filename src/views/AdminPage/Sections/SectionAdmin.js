@@ -66,8 +66,12 @@ export default function SectionStudent() {
     const [openupd, setOpenupd] = React.useState(false);
     const [opendel, setOpendel] = React.useState(false);
     const [opensearch, setOpensearch] = React.useState(false);
+    const[openadv, setOpenadv] = React.useState(false);
+    
 
     const handleChange = e => setValue(e.target.value);
+
+    const res = '';
 
 
     //Student CRUD
@@ -75,6 +79,7 @@ export default function SectionStudent() {
     const [upddisplayresultstu, setupdresultstu] = useState(false);
     const [delddisplayresultstu, setdelresultstu] = useState(false);
     const [seaddisplayresultstu, setsearesultstu] = useState(false);
+    const [advdisplayresultstu, setadvresultstu] = useState(false);
 
 
     const [stunetid, setstunetid] = useState('');
@@ -85,6 +90,7 @@ export default function SectionStudent() {
     const [stunetiddel, setstunetiddel] = useState('');
     const [stunamedel, setstunamedel] = useState('');
     const [seastunetid, setstunetidsea] = useState('');
+    const [advstunetid, setadvstunetid] = useState('');
   
     const handlestunid = snid => setstunetid(snid.target.value);
     const handlestuname = sname => setstuname(sname.target.value);
@@ -94,11 +100,12 @@ export default function SectionStudent() {
     const handlestudnid = dsnid => setstunetiddel(dsnid.target.value);
     const handlestudname = dsname => setstunamedel(dsname.target.value);
     const handlestusnid = ssnid => setstunetidsea(ssnid.target.value);
+    const handlestuanid = asnid => setadvstunetid(asnid.target.value);
 
     //Student (Prithiv)
     const getStudent = () => {
         Axios.post('http://localhost:3002/api/getStudent', {
-            NetID: NetID
+            NetID: seastunetid
         }).then((result) => {
           alert(JSON.stringify(result.data).replace(/[\\r]/g, ''))
         })
@@ -106,16 +113,16 @@ export default function SectionStudent() {
     
       const addStudent = () => { 
         Axios.post('http://localhost:3002/api/insertStudent', {
-            NetID: NetID,
-            Student_Name: Student_Name
+            NetID: seastunetid,
+            Student_Name: stuname
         }).then(() => {
-          alert('successful insertion')
+          //alert('successful insertion')
         })
       };  
     
       const deleteStudent = () => {
         Axios.post('http://localhost:3002/api/deleteStudent', {
-            NetID: NetID
+            NetID: stunetiddel
         }).then(() => {
           alert('successful deletion')
         })
@@ -123,8 +130,8 @@ export default function SectionStudent() {
     
       const updateStudent = () => {
         Axios.post(`http://localhost:3002/api/updateStudent`, {
-            NetID: NetID,
-            Student_Name: Student_Name
+            NetID: oldstunid,
+            Student_Name: newstuname
         }).then(() => {
           alert('successful update')
         })
@@ -132,7 +139,7 @@ export default function SectionStudent() {
       
       const countRequires = () => {
         Axios.post('http://localhost:3002/api/countRequires', {
-            NetID: NetID
+            NetID: advstunetid
         }).then((result) => {
           alert(JSON.stringify(result.data))
         })
@@ -255,7 +262,7 @@ export default function SectionStudent() {
     const handlestanamed = dsname => setstanamedel(dsname.target.value);
     const handlestaidd = dsid => setstaiddel(dsid.target.value);
     const handlestaposd = dspos => setstaposdel(dspos.target.value);
-    const handlestaids = ssid => setstaidsea(ssid.target.value);
+    const handlestnida = ssid => setstaidsea(ssid.target.value);
 
 
     const handleClick = () => {
@@ -325,6 +332,7 @@ export default function SectionStudent() {
     };
     const handleInsert = () => {
       setOpenins(true);
+      addStudent();
 
       //Student
       setinsresultstu(false);
@@ -458,6 +466,7 @@ export default function SectionStudent() {
     };
     const handleUpdClose = () => {
         setOpenupd(false);
+        updateStudent();
 
         //Student
         setinsresultstu(false)
@@ -656,6 +665,7 @@ export default function SectionStudent() {
     };
     const handleSeaClose = () => {
         setOpensearch(false);
+        getStudent();
 
         //Student
         setinsresultstu(false);
@@ -689,6 +699,7 @@ export default function SectionStudent() {
     };
     const handleSeaClose1 = () => {
         setOpensearch(false);
+        
 
         //Student
         setinsresultstu(false);
@@ -720,6 +731,20 @@ export default function SectionStudent() {
         setdelresultsta(false)
         setsearesultsta(false)
     };
+    const handleAdvance = () => {
+        setOpenadv(true)
+        
+        
+    }
+    const handleAdvanceclose = async() => {
+        setOpenadv(false)
+        await countRequires()
+        setadvresultstu(true)
+    }
+    const handleAdvanceclose1 = () => {
+        setOpenadv(false)
+        setadvresultstu(false)
+    }
     return (
         <div className={classes.sections}>
             <div className={classes.container}>
@@ -774,7 +799,7 @@ export default function SectionStudent() {
                                                 />
                                             </DialogContent>
                                             <DialogActions>
-                                                <Button onClick={addStudent, handleInsClose} color="success">Ok</Button>
+                                                <Button onClick={handleInsClose} color="success">Ok</Button>
                                                 <Button onClick={handleInsClose1} color="warning">Cancel</Button>
                                             </DialogActions>
                                         </Dialog>
@@ -826,7 +851,7 @@ export default function SectionStudent() {
                                                     <h4>Success Update: NetId - {oldstunid}, Old Name - {oldstuname} and New Name - {newstuname}</h4>
                                                 </Typography>
                                     </div>}
-                                    <Button onClick={handleDelete} color="danger" round>Delete</Button>
+                                    <Button onClick={deleteStudent, handleDelete} color="danger" round>Delete</Button>
                                     {opendel && <div className={classes.root}>
                                         <Dialog open={opendel} onClose={handleDelClose} aria-labelledby="form-dialog-title">
                                             <DialogTitle id="form-dialog-title"></DialogTitle>
@@ -890,7 +915,33 @@ export default function SectionStudent() {
                                                     <h4>Success Search: NetId - {seastunetid} </h4>
                                                 </Typography>
                                             </div>}
-                                            <Button color="rose" round>Advance Search</Button>
+                                            <Button onClick={handleAdvance} color="rose" round>Advance Search</Button>
+                                            {openadv && <div className={classes.root}>
+                                            <Dialog open={openadv} onClose={handleAdvanceclose} aria-labelledby="form-dialog-title">
+                                            <DialogTitle id="form-dialog-title"></DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                Enter the NetID :
+                                                </DialogContentText>
+
+                                                <TextField onChange={handlestuanid}
+                                                autoFocus
+                                                margin="normal"
+                                                value={advstunetid}
+                                                label="NetID"
+                                                type="text"
+                                                fullWidth
+                                                />
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleAdvanceclose} color="success">Ok</Button>
+                                                <Button onClick={handleAdvanceclose1} color="warning">Cancel</Button>
+                                            </DialogActions>
+                                            </Dialog>
+                                            </div>}
+                                            {advdisplayresultstu && <div className={classes.root}>
+                                            </div>} 
+                                            
                                 </GridItem>
                             </GridContainer>
                         </div>}
@@ -1080,6 +1131,7 @@ export default function SectionStudent() {
                                                 </Typography>
                                         </div>}
                                             <Button color="rose" round>Advance Search</Button>
+                                            
                                 </GridItem>
                             </GridContainer>
                         </div>}
@@ -1530,7 +1582,7 @@ export default function SectionStudent() {
                                                 <DialogContentText>
                                                     Enter the Staff Net ID you would like to search
                                                 </DialogContentText>
-                                                <TextField onChange={handlestaids}
+                                                <TextField onChange={handlestnida}
                                                 autoFocus
                                                 margin="normal"
                                                 value={staidsea}
