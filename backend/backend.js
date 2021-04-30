@@ -7,11 +7,10 @@ const flop = 1;
 
 
 var db = mysql.createConnection({
-    host:'34.67.127.228',
     user: 'root',
     password:'12345',
     database:'project',
-    port: '3306'
+    socketPath: '/cloudql/myinstance2'
 })
 
 app.use(cors());
