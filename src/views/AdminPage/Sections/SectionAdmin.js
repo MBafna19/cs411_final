@@ -574,8 +574,6 @@ export default function SectionStudent() {
              
           };
     
-
-
     const handleClick = () => {
         setinsresultstu(false);
         setupdresultstu(false);
@@ -608,7 +606,6 @@ export default function SectionStudent() {
         setsearesultpur(false);
         setadvresultpur(false)
 
-    const [advdisplayresultpur, setadvresultpur] = useState(false);
       if (value == '') { 
         return
       }
@@ -708,6 +705,7 @@ export default function SectionStudent() {
         addCourse();
         addProgram();
         addDepartment();
+        addPursuing();
 
         //Student
         setinsresultstu(true);
@@ -834,6 +832,7 @@ export default function SectionStudent() {
         updateCourse();
         updateProgram();
         updateDepartment();
+        updatePursuing();
 
         //Student
         setinsresultstu(false)
@@ -959,6 +958,7 @@ export default function SectionStudent() {
         deleteCourse();
         deleteProgram();
         deleteDepartment();
+        deletePursuing();
 
         //Student
         setinsresultstu(false)
@@ -1084,6 +1084,7 @@ export default function SectionStudent() {
         getCourse();
         getProgram();
         getDepartment();
+        getPursuing();
 
         //Student
         setinsresultstu(false);

@@ -1,5 +1,4 @@
-node_modules
-build
-.dockerignore
 Dockerfile
-Dockerfile.prod
+.dockerignore
+node_modules
+npm-debug.log
