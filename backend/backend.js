@@ -7,7 +7,7 @@ const flop = 1;
 
 
 var db = mysql.createConnection({
-    host:'127.0.0.1',
+    host:'34.67.127.228',
     user: 'root',
     password:'12345',
     database:'project',
