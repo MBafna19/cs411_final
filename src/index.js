@@ -14,7 +14,6 @@ import HomePage from "views/HomePage/Homepage.js";
 import AdminPage from "views/AdminPage/Admin.js";
 
 var hist = createBrowserHistory();
-
 ReactDOM.render(
   <Router history={hist}>
     <Switch>

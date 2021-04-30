@@ -7,36 +7,11 @@ const flop = 1;
 
 
 var db = mysql.createConnection({
-    host:'127.0.0.1',
+    host:'34.67.127.228',
     user: 'root',
     password:'12345',
     database:'project',
 })
-
-
-/*
-db.connect(function(err) {
-    //if (err) throw err;
-    //if (flop == 1) {
-        var sql = "INSERT INTO `Student` (`NetID`, `Student_Name`) VALUES ('congfei2', 'Congfayyy');";
-    //    flop = 2;
-    //} else {
-    //    var sql = "DELETE FROM `Student` WHERE `NetID`=`congfei2`";
-    //    flop = 1;
-    //}
-        db.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log(result.affectedRows + " record(s) updated");
-    });
-  });
-
-app.get('/', (require, response) => {
-    const sqlInsert = "INSERT INTO `Student` (`NetID`, `Student_Name`) VALUES ('rohanar2', 'Rohanius');";
-    db.query(sqlInsert, (err, result) => {
-        response.send("Hello world!!!");
-    })
-})
-*/
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -160,7 +135,7 @@ app.post("/api/deleteRequires", (require, response) => {
     const P_ID = require.body.P_ID;
 
     const sqlDelete = "DELETE FROM `Requires` WHERE (CRN = ? AND P_ID = ?)";  // not sure if this is valid
-    db.query(sqlDelete, NetID, (err, result) => {
+    db.query(sqlDelete,[CRN, P_ID], (err, result) => {
         
         console.log(err);
     })
@@ -225,7 +200,7 @@ app.post("/api/updateProgram", (require, response) => {
 
 app.post("/api/getWorking", (require, response) => {
     const NetID = require.body.NetID;
-    const CRN = "SELECT CRN FROM `Working_in` WHERE NetID = ?";
+    const sqlSelect = "SELECT CRN FROM `Working_in` WHERE NetID = ?";
     db.query(sqlSelect, [NetID], (err, result) => {
         response.send(result);
     })
@@ -375,7 +350,7 @@ app.post("/api/insertStaff", (require, response) => {
     const sqlInsert = "INSERT INTO `Staff` (`NetID`,`Staff_Name`,`Position`) VALUES (?,?,?)";
     db.query(sqlInsert, [NetID, Staff_Name, Position], (err, result) => {
         if (err)
-       console.log(error);
+       console.log(err);
     })
    });
    
@@ -407,7 +382,7 @@ app.post("/api/insertStaff", (require, response) => {
        
        
        const sqlInsert = "Update `Staff` SET Position = ? WHERE NetID = ?";
-       db.query(sqlInsert, [NetID, Staff_Name, Position], (err, result) => {
+       db.query(sqlInsert, [Position, NetID], (err, result) => {
            if(err)
        console.log(err);
        })
@@ -484,7 +459,9 @@ app.post("/api/listCoursesRequired", (require, response) => {
 //app.listen
 app.listen(3002, () => {
     console.log("running on port 3002");
-})
+});
+
+
 
 // classes left in the students program
 app.post("/api/listRemainingCourses", (require, response) => {

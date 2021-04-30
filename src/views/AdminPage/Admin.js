@@ -49,14 +49,14 @@ export default function AdminPage(props) {
         brand="CRUD Operations"
         rightLinks={<HeaderLinks />}
         fixed
-        color="transparent"
+        color="white"
         changeColorOnScroll={{
-          height: 500,
+          height: 400,
           color: "white"
         }}
         {...rest}
       />
-      <Parallax image={require("assets/img/bg4.jpg")}>
+      <Parallax image={require("assets/img/college8.jpg")}>
         <div className={classes.container}>
           <GridContainer>
             <GridItem>
