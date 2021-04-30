@@ -42,20 +42,20 @@ export default function HomePage(props) {
         brand="Program Finder"
         rightLinks={<HeaderLinks />}
         fixed
-        color="transparent"
+        color="white"
         changeColorOnScroll={{
           height: 400,
           color: "white"
         }}
         {...rest}
       />
-      <Parallax image={require("assets/img/bg4.jpg")}>
+      <Parallax image={require("assets/img/college8.jpg")}>
         <div className={classes.container}>
           <GridContainer>
             <GridItem>
               <div className={classes.brand}>
-                <h1 className={classes.title}>Program Finder</h1>
-                <h3 className={classes.subtitle}>
+                <h1 className={classes.title} style={{ color: 'white' }}>Program Finder</h1>
+                <h3 className={classes.subtitle} style={{ color: 'white' }}>
                   A CS 411 project by Mihir, Oishee, Sunny, and Prithiv
                 </h3>
               </div>
