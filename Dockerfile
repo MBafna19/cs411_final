@@ -1,20 +1,10 @@
-# pull official base image
-FROM node:13.12.0-alpine
 
-# set working directory
-WORKDIR /app
-
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
-
-# install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install --silent
-RUN npm install react-scripts@3.4.1 -g --silent
-
-# add app
-COPY . ./
-
-# start app
-CMD ["npm", "start"]
+# Use below nginx version
+FROM nginx:1.15.2-alpine
+# Copy the build folder of the react app
+COPY ./build /var/www
+# Copy the ngnix configrations
+COPY deployments/nginx.conf /etc/nginx/nginx.conf
+# Expose it on port 80
+EXPOSE 80
+ENTRYPOINT ["nginx","-g","daemon off;"]
